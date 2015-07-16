@@ -1,70 +1,53 @@
+/*
+Based on "processing_bean" by Boris Kourtoukov
+ Modified by Kate Hartman 
+ A simplified example meant to work with 1 sensor on pin A0
+ 
+ Workshop participants:
+ Modify the graphics below!
+ */
+
 Connection osc = new Connection();
 
 void setup() {
   size( 1024, 768 );
   frameRate( 60 );
 }
- 
+
 void draw() {
   background(200);
-  
-  // Check if there are any devices before looping over them.
-  if( osc.devices != null ) {
+
+  if ( osc.devices != null ) {
     // Loop over the array of current devices.
-    for(int i = 0; i < osc.devices.length; i++) {
+    for (int i = 0; i < osc.devices.length; i++) {
       Device bean = osc.devices[i]; // Store the current device for ease of access.
-      
-      // Calculate the width for the whole bean to take up. 
+
+      // Calculate the width of the screen for the bean to take up. 
       int bean_area = width / osc.devices.length; 
-      int rectangle_width = bean_area / 3; // 1/3 of that for X, Y, Z bars.
-      
+
       noStroke();
-      translate(0, height / 2); // Moves to center vertically.
-      
-      // Draw a transparent background for the whole bean.
+
+      //alternate colors for every other bean
       if (i % 2 == 0) {
-        fill( 255 - (20 * i), 20 * i, 0, 50  );
+        fill(250, 75, 200);
       } else {
-        fill( 0, 20 * i, 255 - (20 * i), 50 );
+        fill(22, 221, 53);
       }
-      
-      rect(i * bean_area, height / 2 * -1, bean_area, height);
-      
-      stroke(255);
-      strokeWeight(2);
-      
-      // These are just to get more random colors quickly:
-      if (i % 2 == 0) {
-        fill( 255 - (20 * i), 20 * i, 0  );
-      } else {
-        fill( 0, 20 * i, 255 - (20 * i) );
-      }
-      
-      // Display a rectangle for each axis:
-      rect(i * bean_area, 0, rectangle_width, bean.get(1));
-      rect(i * bean_area + rectangle_width, 0, rectangle_width, bean.get(2));
-      rect(i * bean_area + (rectangle_width * 2), 0, rectangle_width, bean.get(3));
-      
-      // Show the name of the bean on screen!
-      //   text with text shadow for readability.
+
+      //get the bean value and map it to the height
+      //change the number in bean.get to whatever you need
+      float beanValue = map(bean.get(5), 0, 1000, 0, height); 
+      // Display a rectangle for whose height represents the sensor value
+      rect(i * bean_area, height-beanValue, bean_area, height);
+
+      // display the bean name
       fill(0);
       text(bean.name, i * bean_area + 6, 21 );
-      fill(255);
-      text(bean.name, i * bean_area + 5, 20 );
-      text(bean.name, i * bean_area + 5, 20 ); // Shows up better.
-      
-      // Show the values:
-      fill(0);
-      text(bean.get(1), i * bean_area + 6, -19 );
-      text(bean.get(2), i * bean_area + 6 + rectangle_width, -19 );
-      text(bean.get(3), i * bean_area + 6 + (rectangle_width * 2), -19 ); 
-      fill(255);
-      text(bean.get(1), i * bean_area + 5, -20 );
-      text(bean.get(2), i * bean_area + 5 + rectangle_width, -20 );
-      text(bean.get(3), i * bean_area + 5 + (rectangle_width * 2), -20 ); 
 
-      translate(0, height / 2 * -1); // returns to original coords for next translate.
+      // display the bean value
+      fill(0);
+      text(beanValue, i * bean_area + 6, 41 );
     }
   }
-  
 }
+
